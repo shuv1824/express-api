@@ -1,3 +1,6 @@
+import { JwtPayload } from 'jsonwebtoken';
+import { Request } from 'express';
+
 export interface IUser {
   // _id: string;
   email: string;
@@ -30,4 +33,40 @@ export interface ApiResponse<T = any> {
     total: number;
     totalPages: number;
   };
+}
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+export interface RegisterData {
+  name: string;
+  email: string;
+  password: string;
+  role?: 'user' | 'admin';
+}
+
+export interface JWTPayload extends JwtPayload {
+  id: string;
+  email: string;
+  role: string;
+}
+
+export interface PaginationQuery {
+  page?: string;
+  limit?: string;
+  sort?: string;
+  search?: string;
+}
+
+export interface DatabaseError extends Error {
+  code?: number;
+  keyPattern?: Record<string, number>;
+}
+
+export interface ValidationError {
+  field: string;
+  message: string;
+  value?: any;
 }
