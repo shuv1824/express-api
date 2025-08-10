@@ -30,7 +30,8 @@
       "@/routes/*": ["src/routes/*"],
       "@/utils/*": ["src/utils/*"],
       "@/config/*": ["src/config/*"],
-      "@/types/*": ["src/types/*"]
+      "@/types/*": ["src/types/*"],
+      "@/schemas/*": ["src/schemas/*"]
     }
   },
   "include": ["src/**/*"],
