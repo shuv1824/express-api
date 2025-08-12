@@ -11,7 +11,7 @@ interface Config {
   };
   jwt: {
     secret: string;
-    expiresIn: string;
+    expiresIn: number;
   };
   rateLimit: {
     windowMs: number;
@@ -40,7 +40,7 @@ export const config: Config = {
   },
   jwt: {
     secret: process.env.JWT_SECRET!,
-    expiresIn: process.env.JWT_EXPIRES_IN || '7d',
+    expiresIn: parseInt(process.env.JWT_EXPIRES_IN || '604800'),
   },
   rateLimit: {
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000', 10), // 15 minutes
