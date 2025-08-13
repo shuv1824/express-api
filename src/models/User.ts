@@ -66,7 +66,7 @@ const userSchema = new Schema<IUserDocument>(
 );
 
 // Index for better query performance
-userSchema.index({ email: 1 });
+// userSchema.index({ email: 1 });
 userSchema.index({ isActive: 1 });
 
 // Pre-save middleware to hash password
