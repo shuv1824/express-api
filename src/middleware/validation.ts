@@ -19,7 +19,7 @@ export const validateBody = (schema: z.ZodObject) => {
 
 export const validateParams = (schema: z.ZodObject) => {
   return (req: Request, res: Response, next: NextFunction): void => {
-    const { isValid, errors, value } = validateSchema(schema, req.params);
+    const { isValid, errors } = validateSchema(schema, req.params);
 
     if (!isValid) {
       ResponseUtil.validationError(res, 'Invalid parameters', errors);
@@ -32,7 +32,7 @@ export const validateParams = (schema: z.ZodObject) => {
 
 export const validateQuery = (schema: z.ZodObject) => {
   return (req: Request, res: Response, next: NextFunction): void => {
-    const { isValid, errors, value } = validateSchema(schema, req.query);
+    const { isValid, errors } = validateSchema(schema, req.query);
 
     if (!isValid) {
       ResponseUtil.validationError(res, 'Invalid query parameters', errors);

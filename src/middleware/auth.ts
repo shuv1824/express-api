@@ -35,7 +35,7 @@ export const authenticate = async (
       req.user = {
         id: decoded.id,
         email: decoded.email,
-        // role: decoded.role,
+        role: decoded.role,
       };
 
       next();
@@ -50,18 +50,18 @@ export const authenticate = async (
   }
 };
 
-// export const authorize = (...roles: string[]) => {
-//   return (req: AuthRequest, res: Response, next: NextFunction): void => {
-//     if (!req.user) {
-//       ResponseUtil.unauthorized(res, 'Authentication required');
-//       return;
-//     }
-//
-//     if (!roles.includes(req.user.role)) {
-//       ResponseUtil.forbidden(res, 'Insufficient permissions');
-//       return;
-//     }
-//
-//     next();
-//   };
-// };
+export const authorize = (...roles: string[]) => {
+  return (req: AuthRequest, res: Response, next: NextFunction): void => {
+    if (!req.user) {
+      ResponseUtil.unauthorized(res, 'Authentication required');
+      return;
+    }
+
+    if (!roles.includes(req.user.role)) {
+      ResponseUtil.forbidden(res, 'Insufficient permissions');
+      return;
+    }
+
+    next();
+  };
+};

@@ -1,11 +1,12 @@
 import { Router, Request, Response } from 'express';
 import { ResponseUtil } from '@/utils/response';
 import authRoutes from './auth';
+import userRoutes from './user';
 
 const router = Router();
 
 // Health check endpoint
-router.get('/health', (req: Request, res: Response) => {
+router.get('/health', (_req: Request, res: Response) => {
   ResponseUtil.success(
     res,
     {
@@ -19,7 +20,7 @@ router.get('/health', (req: Request, res: Response) => {
 });
 
 // API Info endpoint
-router.get('/', (req: Request, res: Response) => {
+router.get('/', (_req: Request, res: Response) => {
   ResponseUtil.success(
     res,
     {
@@ -39,5 +40,6 @@ router.get('/', (req: Request, res: Response) => {
 
 // Route handlers
 router.use('/auth', authRoutes);
+router.use('/users', userRoutes);
 
 export default router;

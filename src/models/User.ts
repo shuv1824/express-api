@@ -32,11 +32,11 @@ const userSchema = new Schema<IUserDocument>(
       minlength: [6, 'Password must be at least 6 characters long'],
       select: false, // Don't include password in queries by default
     },
-    // role: {
-    //   type: String,
-    //   enum: ['user', 'admin'],
-    //   default: 'user',
-    // },
+    role: {
+      type: String,
+      enum: ['user', 'admin'],
+      default: 'user',
+    },
     isActive: {
       type: Boolean,
       default: true,
@@ -45,7 +45,7 @@ const userSchema = new Schema<IUserDocument>(
   {
     timestamps: true,
     toJSON: {
-      transform: function (doc, ret) {
+      transform: function (_doc, ret) {
         ret.id = ret._id;
         delete ret._id;
         delete (ret as any).__v;
@@ -54,7 +54,7 @@ const userSchema = new Schema<IUserDocument>(
       },
     },
     toObject: {
-      transform: function (doc, ret) {
+      transform: function (_doc, ret) {
         ret.id = ret._id;
         delete ret._id;
         delete (ret as any).__v;

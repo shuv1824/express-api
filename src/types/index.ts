@@ -6,7 +6,7 @@ export interface IUser {
   email: string;
   password: string;
   name: string;
-  // role: 'user' | 'admin';
+  role: 'user' | 'admin';
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -15,7 +15,7 @@ export interface IUser {
 export interface IUserPayload {
   id: string;
   email: string;
-  // role: 'user' | 'admin';
+  role: string;
 }
 
 export interface AuthRequest extends Request {
