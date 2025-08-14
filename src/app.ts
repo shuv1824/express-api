@@ -60,16 +60,6 @@ class App {
   private initializeRoutes(): void {
     // API routes
     this.app.use('/api', routes);
-
-    // Root route
-    this.app.get('/', (_req, res) => {
-      res.json({
-        success: true,
-        message: 'TypeScript Express API Server',
-        version: '1.0.0',
-        docs: '/api',
-      });
-    });
   }
 
   private initializeErrorHandling(): void {
