@@ -1,0 +1,110 @@
+version: '3.8'
+
+services:
+  # Express API Development Service
+  api-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: express-api-dev
+    ports:
+      - "${PORT:-5000}:5000"
+      - "9229:9229"  # Node.js debugging port
+    environment:
+      - NODE_ENV=development
+      - PORT=${PORT:-5000}
+      - MONGODB_URI=mongodb://mongodb-dev:27017/express-api-dev
+      - JWT_SECRET=${JWT_SECRET:-dev-secret-key-only-for-development}
+      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN:-604800}
+      - RATE_LIMIT_WINDOW_MS=${RATE_LIMIT_WINDOW_MS:-900000}
+      - RATE_LIMIT_MAX_REQUESTS=${RATE_LIMIT_MAX_REQUESTS:-100}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-http://localhost:3000,http://localhost:5000}
+      # Debugging options
+      - DEBUG=express:*
+      - NODE_OPTIONS=--max-old-space-size=2048
+    volumes:
+      # Mount source code for hot-reloading
+      - ./src:/app/src:delegated
+      - ./tests:/app/tests:delegated
+      # Mount config files
+      - ./tsconfig.json:/app/tsconfig.json:ro
+      - ./jest.config.js:/app/jest.config.js:ro
+      - ./.eslintrc.js:/app/.eslintrc.js:ro
+      - ./.prettierrc:/app/.prettierrc:ro
+      # Persist node_modules in named volume for better performance
+      - node_modules:/app/node_modules
+      # Prevent dist from being synced
+      - dist:/app/dist
+    depends_on:
+      mongodb-dev:
+        condition: service_healthy
+    networks:
+      - dev-network
+    stdin_open: true  # Keep STDIN open (docker -i)
+    tty: true         # Allocate pseudo-TTY (docker -t)
+    command: npm run dev
+    # Alternative commands for different scenarios:
+    # For debugging: command: node --inspect=0.0.0.0:9229 -r tsx/cjs src/server.ts
+    # For testing: command: npm test
+    # For test watching: command: npm run test:watch
+
+  # MongoDB Development Service
+  mongodb-dev:
+    image: mongo:7-jammy
+    container_name: express-api-mongodb-dev
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=express-api-dev
+    volumes:
+      - mongodb-dev-data:/data/db
+      - mongodb-dev-config:/data/configdb
+      # Optional: Mount init scripts
+      # - ./docker/mongo-init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - dev-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # Optional: MongoDB Express for GUI database management
+  mongo-express:
+    image: mongo-express:latest
+    container_name: express-api-mongo-express
+    ports:
+      - "8081:8081"
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongodb-dev
+      - ME_CONFIG_MONGODB_PORT=27017
+      - ME_CONFIG_BASICAUTH_USERNAME=${MONGO_EXPRESS_USERNAME:-admin}
+      - ME_CONFIG_BASICAUTH_PASSWORD=${MONGO_EXPRESS_PASSWORD:-pass}
+      - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
+    depends_on:
+      mongodb-dev:
+        condition: service_healthy
+    networks:
+      - dev-network
+    restart: unless-stopped
+    profiles:
+      - tools  # Only starts when explicitly requested
+
+networks:
+  dev-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  mongodb-dev-data:
+    driver: local
+  mongodb-dev-config:
+    driver: local
+  node_modules:
+    driver: local
+  dist:
+    driver: local

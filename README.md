@@ -53,6 +53,86 @@ src/
 
 ## Installation
 
+You can set up this project using either traditional Node.js installation or Docker (recommended for consistency across environments).
+
+### Option 1: Docker Installation (Recommended)
+
+#### Prerequisites
+- Docker Desktop (version 20.10 or higher)
+- Docker Compose (version 2.0 or higher)
+- Make (optional, for convenience commands)
+
+#### Quick Start with Docker
+
+1. **Clone the repository**
+
+```bash
+git clone <repository-url>
+cd express-api
+```
+
+2. **Set up environment variables**
+
+```bash
+cp .env.example .env
+# Edit .env with your configuration if needed
+```
+
+3. **Start the development environment**
+
+```bash
+# Using Make (recommended)
+make dev-build
+
+# Or using Docker Compose directly
+docker-compose -f docker-compose.dev.yml up --build
+```
+
+The API will be available at `http://localhost:5000` with hot-reloading enabled.
+
+#### Docker Commands
+
+```bash
+# Development
+make dev              # Start development environment
+make dev-build        # Build and start development environment
+make dev-down         # Stop development environment
+make dev-logs         # View development logs
+make dev-shell        # Access container shell
+make dev-debug        # Start with debugging on port 9229
+make dev-tools        # Start with MongoDB Express GUI
+
+# Production
+make prod             # Start production environment
+make prod-build       # Build and start production environment
+make prod-down        # Stop production environment
+
+# Testing
+make test             # Run tests in Docker
+make test-watch       # Run tests in watch mode
+
+# Database
+make db-shell         # Access MongoDB shell
+make db-backup        # Backup database
+
+# Cleanup
+make clean            # Remove all containers and volumes
+```
+
+#### Development with MongoDB Express
+
+To use the MongoDB GUI interface:
+
+```bash
+# Start development with MongoDB Express
+make dev-tools
+
+# Access MongoDB Express at http://localhost:8081
+# Default credentials: admin/pass
+```
+
+### Option 2: Traditional Installation
+
 1. **Clone the repository**
 
 ```bash
@@ -75,6 +155,18 @@ cp .env.example .env
 
 4. **Start MongoDB**
    Make sure MongoDB is running on your system, or update the `MONGODB_URI` in your `.env` file.
+
+### Docker Architecture
+
+The project includes multiple Docker configurations:
+
+| File | Purpose | Features |
+|------|---------|----------|
+| `Dockerfile` | Production build | Multi-stage build, minimal size, non-root user |
+| `Dockerfile.dev` | Development environment | Hot-reloading, debugging, all dev tools |
+| `docker-compose.yml` | Production orchestration | API + MongoDB, health checks, restart policies |
+| `docker-compose.dev.yml` | Development orchestration | Volume mounts, debugging ports, MongoDB Express |
+| `Makefile` | Convenience commands | Simplified Docker operations |
 
 ## Getting Started
 
@@ -323,19 +415,35 @@ Error responses:
 
 ## Deployment
 
-### Docker (Optional)
+### Docker Deployment
 
-Create a `Dockerfile` for containerization:
+The project includes production-ready Docker configurations:
 
-```dockerfile
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY dist/ ./dist/
-EXPOSE 3000
-CMD ["node", "dist/server.js"]
+#### Build and Run Production Container
+
+```bash
+# Build production image
+docker build -t express-api:latest .
+
+# Run with docker-compose (includes MongoDB)
+docker-compose up -d
+
+# Or run standalone (requires external MongoDB)
+docker run -d \
+  -p 5000:5000 \
+  --env-file .env \
+  --name express-api \
+  express-api:latest
 ```
+
+#### Production Docker Features
+
+- Multi-stage build for minimal image size (~150MB)
+- Non-root user for security
+- Health checks for reliability
+- Proper signal handling with dumb-init
+- Environment variable configuration
+- Persistent MongoDB volumes
 
 ### Production Checklist
 
