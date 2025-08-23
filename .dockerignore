@@ -49,9 +49,3 @@ Dockerfile
 docker-compose*.yml
 .dockerignore
 
-# Miscellaneous
-.eslintrc*
-.prettierrc*
-jest.config.*
-tsconfig.json
-.editorconfig

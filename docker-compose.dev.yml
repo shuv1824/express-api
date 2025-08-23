@@ -40,13 +40,6 @@ services:
         condition: service_healthy
     networks:
       - dev-network
-    stdin_open: true  # Keep STDIN open (docker -i)
-    tty: true         # Allocate pseudo-TTY (docker -t)
-    command: npm run dev
-    # Alternative commands for different scenarios:
-    # For debugging: command: node --inspect=0.0.0.0:9229 -r tsx/cjs src/server.ts
-    # For testing: command: npm test
-    # For test watching: command: npm run test:watch
 
   # MongoDB Development Service
   mongodb-dev:
@@ -95,9 +88,6 @@ services:
 networks:
   dev-network:
     driver: bridge
-    ipam:
-      config:
-        - subnet: 172.20.0.0/16
 
 volumes:
   mongodb-dev-data:

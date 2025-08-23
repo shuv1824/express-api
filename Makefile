@@ -20,10 +20,10 @@ help:
 
 # Development commands
 dev:
-	docker-compose -f docker-compose.dev.yml up
+	docker-compose -f docker-compose.dev.yml up -d
 
 dev-build:
-	docker-compose -f docker-compose.dev.yml up --build
+	docker-compose -f docker-compose.dev.yml up -d --build
 
 dev-down:
 	docker-compose -f docker-compose.dev.yml down
@@ -42,10 +42,10 @@ dev-tools:
 
 # Production commands
 prod:
-	docker-compose up
+	docker-compose up -d
 
 prod-build:
-	docker-compose up --build
+	docker-compose up -d --build
 
 prod-down:
 	docker-compose down
